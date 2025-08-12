@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package com.example.grpc;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message PurchaseLogResponse {
+  string email = 1;
+  string gender = 2;
+  int32 age = 3;
+  Product product = 4;
+  int32 quantity = 5;
+  int32 starCount = 6;
+  int32 totalPrice = 7;
+  google.protobuf.Timestamp purchaseTime = 8;
+}
+
+message Product {
+  string category = 1;
+  string name = 2;
+  int32 price = 3;
+}
+
+message PurchaseLogList {
+  repeated PurchaseLogResponse logs = 1;
+}
+
+service TestService {
+  rpc readAllPurchaseLog (google.protobuf.Empty) returns (PurchaseLogList);
+}
