@@ -1,0 +1,38 @@
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./src/main/resources/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    restart: always
+    networks:
+      - prometheus-grafana-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: always
+    depends_on:
+      - prometheus
+    privileged: true
+    networks:
+      - prometheus-grafana-network
+
+  java-app:
+    build:
+      context: .
+    container_name: java-app
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    restart: always
+    networks:
+      - prometheus-grafana-network
+
+networks:
+  prometheus-grafana-network:
+    driver: bridge
