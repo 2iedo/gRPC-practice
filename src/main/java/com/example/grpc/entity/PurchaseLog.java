@@ -1,0 +1,62 @@
+package com.example.grpc.entity;
+
+import com.example.grpc.dto.PurchaseLogResponse;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Entity
+public class PurchaseLog {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull
+    private LocalDateTime purchaseTime;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Product product;
+
+    @NotNull
+    private int quantity;
+
+    @NotNull
+    private int starCount;
+
+    public PurchaseLog() {}
+
+    public PurchaseLog(LocalDateTime purchaseTime, Member member, Product product, int quantity, int starCount){
+        this.purchaseTime = purchaseTime;
+        this.member = member;
+        this.product = product;
+        this.quantity = quantity;
+        this.starCount = starCount;
+    }
+
+    public int getTotalPrice(){
+        return this.product.getPrice() * this.quantity;
+    }
+
+    public PurchaseLogResponse mapToResponse(){
+        return new PurchaseLogResponse(member.getEmail(), member.getGender(), member.getAge(),
+                new PurchaseLogResponse.Product(product.getCategory(), product.getName(), product.getPrice()),
+                quantity,
+                starCount,
+                getTotalPrice(),
+                purchaseTime);
+    }
+}
