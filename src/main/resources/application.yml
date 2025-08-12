@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: grpc
+
+  datasource:
+    driver-class:
+      name: org.h2.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
